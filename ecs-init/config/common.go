@@ -20,7 +20,7 @@ import (
 
 const (
 	// AgentImageName is the name of the Docker image containing the Agent
-	AgentImageName = "amazon/amazon-ecs-agent:latest"
+	AgentImageName = "cloudstax/openmanage-amazon-ecs-agent:latest"
 
 	// AgentContainerName is the name of the Agent container started by this program
 	AgentContainerName = "ecs-agent"
