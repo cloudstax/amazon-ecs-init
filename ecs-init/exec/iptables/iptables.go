@@ -16,7 +16,7 @@ package iptables
 import (
 	"fmt"
 
-	"github.com/aws/amazon-ecs-init/ecs-init/exec"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/exec"
 	log "github.com/cihub/seelog"
 )
 

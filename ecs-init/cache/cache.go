@@ -24,7 +24,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aws/amazon-ecs-init/ecs-init/config"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/config"
 	log "github.com/cihub/seelog"
 )
 

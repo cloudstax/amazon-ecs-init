@@ -53,6 +53,10 @@ func (_mr *_MockdockerclientRecorder) ListImages(arg0 interface{}) *gomock.Call 
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListImages", arg0)
 }
 
+func (_m *Mockdockerclient) PullImage(opts go_dockerclient.PullImageOptions, auth go_dockerclient.AuthConfiguration) error {
+	return nil
+}
+
 func (_m *Mockdockerclient) LoadImage(opts go_dockerclient.LoadImageOptions) error {
 	ret := _m.ctrl.Call(_m, "LoadImage", opts)
 	ret0, _ := ret[0].(error)

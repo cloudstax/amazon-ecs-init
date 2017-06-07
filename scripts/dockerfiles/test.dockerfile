@@ -21,6 +21,6 @@ FROM golang:1.4
 MAINTAINER Amazon Web Services, Inc.
 
 RUN mkdir -p /go/src/github.com/aws/
-WORKDIR /go/src/github.com/aws/amazon-ecs-init
+WORKDIR /go/src/github.com/cloudstax/amazon-ecs-init
 
-ENTRYPOINT /go/src/github.com/aws/amazon-ecs-init/scripts/test
+ENTRYPOINT /go/src/github.com/cloudstax/amazon-ecs-init/scripts/test

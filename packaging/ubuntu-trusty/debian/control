@@ -5,8 +5,8 @@ Maintainer: Samuel Karp <skarp@amazon.com>
 Build-Depends: debhelper (>= 9.0.0), golang-1.6 (>= 1.6)
 Standards-Version: 3.9.5
 Homepage: https://aws.amazon.com/ecs
-Vcs-Git: git://github.com/aws/amazon-ecs-init.git
-Vcs-Browser: http://github.com/aws/amazon-ecs-init
+Vcs-Git: git://github.com/cloudstax/amazon-ecs-init.git
+Vcs-Browser: http://github.com/cloudstax/amazon-ecs-init
 
 Package: amazon-ecs-init
 Architecture: amd64

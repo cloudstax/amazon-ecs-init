@@ -22,7 +22,7 @@ Release:        0
 Summary:        Amazon EC2 Container Service Initialization
 License:        Apache-2.0
 Group:          System Environment/Base
-Url:            https://github.com/aws/amazon-ecs-init
+Url:            https://github.com/cloudstax/amazon-ecs-init
 Source0:        %{name}-%{version}.tar.gz
 Source1:        %{short_name}.service
 BuildRequires:  go

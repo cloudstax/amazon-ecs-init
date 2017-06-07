@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/aws/amazon-ecs-init/ecs-init",
+	"ImportPath": "github.com/cloudstax/amazon-ecs-init/ecs-init",
 	"GoVersion": "go1.4.2",
 	"Packages": [
 		"./..."

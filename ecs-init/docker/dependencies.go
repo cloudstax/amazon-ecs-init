@@ -21,8 +21,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/aws/amazon-ecs-init/ecs-init/backoff"
-	"github.com/aws/amazon-ecs-init/ecs-init/config"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/backoff"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/config"
 
 	log "github.com/cihub/seelog"
 	godocker "github.com/fsouza/go-dockerclient"
@@ -30,6 +30,7 @@ import (
 
 type dockerclient interface {
 	ListImages(opts godocker.ListImagesOptions) ([]godocker.APIImages, error)
+	PullImage(opts godocker.PullImageOptions, auth godocker.AuthConfiguration) error
 	LoadImage(opts godocker.LoadImageOptions) error
 	ListContainers(opts godocker.ListContainersOptions) ([]godocker.APIContainers, error)
 	RemoveContainer(opts godocker.RemoveContainerOptions) error
@@ -84,6 +85,10 @@ func newDockerClient(dockerClientFactory dockerClientFactory, pingBackoff backof
 
 func (d *_dockerclient) ListImages(opts godocker.ListImagesOptions) ([]godocker.APIImages, error) {
 	return d.docker.ListImages(opts)
+}
+
+func (d *_dockerclient) PullImage(opts godocker.PullImageOptions, auth godocker.AuthConfiguration) error {
+	return d.docker.PullImage(opts, auth)
 }
 
 func (d *_dockerclient) LoadImage(opts godocker.LoadImageOptions) error {

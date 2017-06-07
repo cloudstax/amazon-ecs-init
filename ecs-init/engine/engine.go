@@ -16,15 +16,13 @@ package engine
 import (
 	"errors"
 	"fmt"
-	"io"
-
-	"github.com/aws/amazon-ecs-init/ecs-init/cache"
-	"github.com/aws/amazon-ecs-init/ecs-init/docker"
-	"github.com/aws/amazon-ecs-init/ecs-init/exec"
-	"github.com/aws/amazon-ecs-init/ecs-init/exec/iptables"
-	"github.com/aws/amazon-ecs-init/ecs-init/exec/sysctl"
 
 	log "github.com/cihub/seelog"
+
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/docker"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/exec"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/exec/iptables"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/exec/sysctl"
 )
 
 const (
@@ -35,19 +33,18 @@ const (
 
 // Engine contains methods invoked when ecs-init is run
 type Engine struct {
-	downloader            downloader
-	docker                dockerClient
+	docker                *docker.Client
 	loopbackRouting       loopbackRouting
 	credentialsProxyRoute credentialsProxyRoute
 }
 
 // New creates an instance of Engine
 func New() (*Engine, error) {
-	downloader := cache.NewDownloader()
-	docker, err := docker.NewClient()
+	dockerclient, err := docker.NewClient()
 	if err != nil {
 		return nil, err
 	}
+
 	cmdExec := exec.NewExec()
 	loopbackRouting, err := sysctl.NewIpv4RouteLocalNet(cmdExec)
 	if err != nil {
@@ -58,8 +55,7 @@ func New() (*Engine, error) {
 		return nil, err
 	}
 	return &Engine{
-		downloader:            downloader,
-		docker:                docker,
+		docker:                dockerclient,
 		loopbackRouting:       loopbackRouting,
 		credentialsProxyRoute: credentialsProxyRoute,
 	}, nil
@@ -80,60 +76,7 @@ func (e *Engine) PreStart() error {
 		return engineError("could not create route to the credentials proxy", err)
 	}
 
-	cached := e.downloader.IsAgentCached()
-	if !cached {
-		return e.downloadAndLoadCache()
-	}
-
-	loaded, err := e.docker.IsAgentImageLoaded()
-	if err != nil {
-		return engineError("could not check if Agent is loaded", err)
-	}
-	if !loaded {
-		return e.load(e.downloader.LoadCachedAgent())
-	}
-
-	return nil
-}
-
-// ReloadCache reloads the cached image of the ECS Agent into Docker
-func (e *Engine) ReloadCache() error {
-	cached := e.downloader.IsAgentCached()
-	if !cached {
-		return e.downloadAndLoadCache()
-	}
-	return e.load(e.downloader.LoadCachedAgent())
-}
-
-func (e *Engine) downloadAndLoadCache() error {
-	err := e.downloadAgent()
-	if err != nil {
-		return err
-	}
-
-	log.Info("Loading Amazon EC2 Container Service Agent into Docker")
-	return e.load(e.downloader.LoadCachedAgent())
-}
-
-func (e *Engine) downloadAgent() error {
-	log.Info("Downloading Amazon EC2 Container Service Agent")
-	err := e.downloader.DownloadAgent()
-	if err != nil {
-		return engineError("could not download Amazon EC2 Container Serivce Agent", err)
-	}
-	return nil
-}
-
-func (e *Engine) load(image io.ReadCloser, err error) error {
-	if err != nil {
-		return engineError("could not load Amazon EC2 Container Service Agent from cache", err)
-	}
-	defer image.Close()
-	err = e.docker.LoadImage(image)
-	if err != nil {
-		return engineError("could not load Amazon EC2 Container Service Agent into Docker", err)
-	}
-	return e.downloader.RecordCachedAgent()
+	return e.docker.CheckAndLoadImage()
 }
 
 // StartSupervised starts the ECS Agent and ensures it stays running, except for terminal errors (indicated by an agent exit code of 5)
@@ -145,6 +88,7 @@ func (e *Engine) StartSupervised() error {
 			return engineError("could not remove existing Agent container", err)
 		}
 
+		// the old container removed or not exists
 		log.Info("Starting Amazon EC2 Container Service Agent")
 		agentExitCode, err = e.docker.StartAgent()
 		if err != nil {
@@ -152,7 +96,7 @@ func (e *Engine) StartSupervised() error {
 		}
 		log.Infof("Agent exited with code %d", agentExitCode)
 		if agentExitCode == upgradeAgentExitCode {
-			err = e.upgradeAgent()
+			err = e.docker.DownloadAgentImage()
 			if err != nil {
 				log.Error("could not upgrade agent", err)
 			}
@@ -162,11 +106,6 @@ func (e *Engine) StartSupervised() error {
 		return errors.New("agent exited with terminal exit code")
 	}
 	return nil
-}
-
-func (e *Engine) upgradeAgent() error {
-	log.Info("Loading new desired Amazon EC2 Container Service Agent into Docker")
-	return e.load(e.downloader.LoadDesiredAgent())
 }
 
 // PreStop sends commands to Docker to stop the ECS Agent

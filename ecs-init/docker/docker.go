@@ -18,8 +18,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/amazon-ecs-init/ecs-init/backoff"
-	"github.com/aws/amazon-ecs-init/ecs-init/config"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/backoff"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/config"
 
 	log "github.com/cihub/seelog"
 	godocker "github.com/fsouza/go-dockerclient"
@@ -74,6 +74,33 @@ func NewClient() (*Client, error) {
 	}, nil
 }
 
+// CheckAndLoadImage checks the existence of the container image and loads it if not exists.
+func (c *Client) CheckAndLoadImage() error {
+	loaded, err := c.IsAgentImageLoaded()
+	if err != nil {
+		log.Error("check anget image loaded error", err)
+		return err
+	}
+
+	if !loaded {
+		// container image not found, pull it
+		log.Info("Agent container image not found, pull it")
+		return c.DownloadAgentImage()
+	}
+
+	// agent image is already loaded
+	return nil
+}
+
+// DownloadAgentImage downloads the agent container image.
+func (c *Client) DownloadAgentImage() error {
+	log.Info("Downloading Agent container image")
+
+	opts := godocker.PullImageOptions{Repository: config.AgentImageName}
+	auth := godocker.AuthConfiguration{}
+	return c.docker.PullImage(opts, auth)
+}
+
 // IsAgentImageLoaded returns true if the Agent image is loaded in Docker
 func (c *Client) IsAgentImageLoaded() (bool, error) {
 	images, err := c.docker.ListImages(godocker.ListImagesOptions{
@@ -94,7 +121,7 @@ func (c *Client) IsAgentImageLoaded() (bool, error) {
 
 // LoadImage loads an io.Reader into Docker
 func (c *Client) LoadImage(image io.Reader) error {
-	return c.docker.LoadImage(godocker.LoadImageOptions{image})
+	return c.docker.LoadImage(godocker.LoadImageOptions{InputStream: image})
 }
 
 // RemoveExistingAgentContainer remvoes any existing container named

@@ -1,8 +1,8 @@
 # Contributing to Amazon ECS Init
 
 Contributions to Amazon ECS Init should be made via GitHub [pull
-requests](https://github.com/aws/amazon-ecs-init/pulls) and discussed using
-GitHub [issues](https://github.com/aws/amazon-ecs-init/issues).
+requests](https://github.com/cloudstax/amazon-ecs-init/pulls) and discussed using
+GitHub [issues](https://github.com/cloudstax/amazon-ecs-init/issues).
 
 ### Before you start
 

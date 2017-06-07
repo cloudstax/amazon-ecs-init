@@ -18,9 +18,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aws/amazon-ecs-init/ecs-init/config"
-	"github.com/aws/amazon-ecs-init/ecs-init/engine"
-	"github.com/aws/amazon-ecs-init/ecs-init/version"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/config"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/engine"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/version"
 
 	log "github.com/cihub/seelog"
 )
@@ -32,7 +32,6 @@ const (
 	START    = "start"
 	PRESTOP  = "pre-stop"
 	POSTSTOP = "post-stop"
-	RECACHE  = "reload-cache"
 )
 
 func main() {
@@ -94,10 +93,6 @@ func actions(engine *engine.Engine) map[string]action {
 		PRESTOP: action{
 			function:    engine.PreStop,
 			description: "Stop the ECS Agent",
-		},
-		RECACHE: action{
-			function:    engine.ReloadCache,
-			description: "Reload the cached image of the ECS Agent into Docker",
 		},
 		POSTSTOP: action{
 			function:    engine.PostStop,

@@ -17,7 +17,7 @@
 package iptables
 
 import (
-	cmd "github.com/aws/amazon-ecs-init/ecs-init/cmd"
+	cmd "github.com/cloudstax/amazon-ecs-init/ecs-init/cmd"
 	gomock "github.com/golang/mock/gomock"
 )
 

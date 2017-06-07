@@ -17,7 +17,7 @@ set -e
 export TOPWD="$(pwd)"
 export BUILDDIR="$(mktemp -d)"
 export GOPATH="${TOPWD}/ecs-init/Godeps/_workspace:${BUILDDIR}"
-export SRCPATH="${BUILDDIR}/src/github.com/aws/amazon-ecs-init"
+export SRCPATH="${BUILDDIR}/src/github.com/cloudstax/amazon-ecs-init"
 mkdir -p "${SRCPATH}"
 ln -s "${TOPWD}/ecs-init" "${SRCPATH}"
 cd "${SRCPATH}/ecs-init"

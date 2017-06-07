@@ -35,7 +35,7 @@ test: generate lint gotest
 
 test-in-docker:
 	docker build -f scripts/dockerfiles/test.dockerfile -t "amazon/amazon-ecs-init-test:make" .
-	docker run -v "$(shell pwd):/go/src/github.com/aws/amazon-ecs-init" "amazon/amazon-ecs-init-test:make"
+	docker run -v "$(shell pwd):/go/src/github.com/cloudstax/amazon-ecs-init" "amazon/amazon-ecs-init-test:make"
 
 build-mock-images:
 	docker build -t "test.localhost/amazon/mock-ecs-agent" -f "scripts/dockerfiles/mock-agent.dockerfile" .

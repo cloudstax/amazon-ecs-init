@@ -24,7 +24,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/aws/amazon-ecs-init/ecs-init/config"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/config"
 	"github.com/golang/mock/gomock"
 )
 
