@@ -46,11 +46,11 @@ cat << EOF > "${CURRENTDIR}"/../ecs-init/version/version.go
 package version
 
 // Version is the version of the ecs-init
-const Version = "${version}"
+var Version string = "${version}"
 
 // GitDirty indicates the cleanliness of the git repo when this ecs-init was built
-const GitDirty = ${git_dirty}
+var GitDirty string = "${git_dirty}"
 
 // GitShortHash is the short hash of this ecs-init build
-const GitShortHash = "${git_hash}"
+var GitShortHash string = "${git_hash}"
 EOF
