@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and
 # limitations under the License.
 
-Name:           ecs-init
+Name:           cloudstax-ecs-init
 Version:        1.14.2
 Release:        2%{?dist}
 Group:          System Environment/Base
@@ -58,7 +58,7 @@ Provides:       bundled(golang(github.com/cihub/seelog))
 %global running_semaphore %{rpmstate_dir}/ecs-init.was-running
 
 %description
-ecs-init is a service which may be run to register an EC2 instance as an Amazon
+cloudstax-ecs-init is a service which may be run to register an EC2 instance as an Amazon
 ECS Container Instance.
 
 %prep
