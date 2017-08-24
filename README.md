@@ -8,6 +8,8 @@ The original ECS Init caches and loads the ECS Agent tar, which is stored in a S
 
 Other usages are the same with the original Amazon ECS Init. For the details, check [Amazon ECS Init](https://github.com/aws/amazon-ecs-init).
 
+Simply make to build the cloudstax-ecs-init rpm. Note: the RPM MUST be built on the Amazon Linux instance. The RPM built on Ubuntu could not run on Amazon Linux instance.
+
 ## License
 
 The CloudStax Amazon EC2 Container Service RPM is licensed under the Apache 2.0 License.
