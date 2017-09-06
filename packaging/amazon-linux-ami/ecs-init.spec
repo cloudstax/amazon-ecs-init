@@ -13,8 +13,8 @@
 # limitations under the License.
 
 Name:           cloudstax-ecs-init
-Version:        1.14.2
-Release:        2%{?dist}
+Version:        1.14.4
+Release:        1%{?dist}
 Group:          System Environment/Base
 Vendor:         Amazon.com
 License:        Apache 2.0
@@ -27,7 +27,7 @@ Source1:        ecs.conf
 
 BuildRequires:  golang >= 1.7
 
-Requires:       docker >= 1.6.0, docker <= 17.03.1ce
+Requires:       docker >= 1.6.0, docker <= 17.03.2ce
 Requires:       upstart
 Requires:       iptables
 Requires:       procps
@@ -149,6 +149,11 @@ if [ -e %{running_semaphore} ]; then
 fi
 
 %changelog
+* Wed Aug 22 2017 Justin Haynes <jushay@amazon.com> - 1.14.4-1
+- Cache Agent version 1.14.4
+- Add support for Docker 17.03.2ce
+* Fri Jun 9 2017 Adnan Khan <adnkha@amazon.com> - 1.14.3-1
+- Cache Agent version 1.14.3
 * Thu Jun 1 2017 Adnan Khan <adnkha@amazon.com> - 1.14.2-2
 - Cache Agent version 1.14.2
 - Add functionality for running agent with userns=host when Docker has userns-remap enabled
