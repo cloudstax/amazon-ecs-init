@@ -26,12 +26,32 @@ import (
 )
 
 const (
-	logDir   = "/log"
-	dataDir  = "/data"
+	// logDir specifies the location of Agent log files in the container
+	logDir = "/log"
+	// dataDir specifies the location of Agent state file in the container
+	dataDir = "/data"
+	// readOnly specifies the read-only suffix for mounting host volumes
+	// when creating the Agent container
 	readOnly = ":ro"
-	// set default to /var/run instead of /var/run/docker.sock in case
-	// /var/run/docker.sock is deleted and recreated outside the container
+	// hostProcDir binds the host's /proc directory to /host/proc within the
+	// ECS Agent container
+	// The ECS Agent needs access to host's /proc directory when configuring
+	// the network namespace of containers for tasks that are configured
+	// with an ENI
+	hostProcDir = "/host/proc"
+	// defaultDockerEndpoint is set to /var/run instead of /var/run/docker.sock
+	// in case /var/run/docker.sock is deleted and recreated outside the container
 	defaultDockerEndpoint = "/var/run"
+	// dhclientLeasesLocation specifies the location where dhclient leases
+	// information is tracked in the Agent container
+	dhclientLeasesLocation = "/var/lib/dhclient"
+	// dhclientLibDir specifies the location of shared libraries on the
+	// host and in the Agent container required for the execution of the dhclient
+	// executable
+	dhclientLibDir = "/lib64"
+	// dhclientExecutableDir specifies the location of the dhclient
+	// executable on the  host and in the Agent container
+	dhclientExecutableDir = "/sbin"
 	// networkMode specifies the networkmode to create the agent container
 	networkMode = "host"
 	// usernsMode specifies the userns mode to create the agent container
@@ -51,6 +71,16 @@ const (
 	// maxRetries specifies the maximum number of retries for ping to return
 	// a successful response from the docker socket
 	maxRetries = 5
+	// CapNetAdmin to start agent with NET_ADMIN capability
+	// For more information on capabilities, please read this manpage:
+	// http://man7.org/linux/man-pages/man7/capabilities.7.html
+	CapNetAdmin = "NET_ADMIN"
+	// CapSysAdmin to start agent with SYS_ADMIN capability
+	// This is needed for the ECS Agent to invoke the setns call when
+	// configuring the network namespace of the pause container
+	// For more information on setns, please read this manpage:
+	// http://man7.org/linux/man-pages/man2/setns.2.html
+	CapSysAdmin = "SYS_ADMIN"
 )
 
 // Client enables business logic for running the Agent inside Docker
@@ -186,7 +216,6 @@ func (c *Client) StartAgent() (int, error) {
 }
 
 func (c *Client) getContainerConfig() *godocker.Config {
-
 	// default environment variables
 	envVariables := map[string]string{
 		"ECS_LOGFILE":                           logDir + "/" + config.AgentLogFile,
@@ -197,6 +226,11 @@ func (c *Client) getContainerConfig() *godocker.Config {
 		"ECS_AVAILABLE_LOGGING_DRIVERS":         `["json-file","syslog","awslogs"]`,
 		"ECS_ENABLE_TASK_IAM_ROLE":              "true",
 		"ECS_ENABLE_TASK_IAM_ROLE_NETWORK_HOST": "true",
+	}
+
+	// merge in platform-specific environment variables
+	for envKey, envValue := range getPlatformSpecificEnvVariables() {
+		envVariables[envKey] = envValue
 	}
 
 	// merge in user-supplied environment variables
@@ -249,11 +283,8 @@ func (c *Client) getHostConfig() *godocker.HostConfig {
 		config.AgentConfigDirectory() + ":" + config.AgentConfigDirectory(),
 		config.CacheDirectory() + ":" + config.CacheDirectory(),
 	}
-	return &godocker.HostConfig{
-		Binds:       binds,
-		NetworkMode: networkMode,
-		UsernsMode:  usernsMode,
-	}
+
+	return createHostConfig(binds)
 }
 
 // StopAgent stops the Agent in docker if one is running

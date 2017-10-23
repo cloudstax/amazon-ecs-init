@@ -30,8 +30,11 @@ const (
 
 	UnixSocketPrefix = "unix://"
 
+	// Used to mount /proc for agent container
+	ProcFS = "/proc"
+
 	// AgentFilename is the filename, including version number, of the agent to be downloaded.
-	AgentFilename = "ecs-agent-v1.14.4.tar"
+	AgentFilename = "ecs-agent-v1.14.5.tar"
 
 	// DefaultRegionName is the name of the region to fall back to if no entry for the region name is found in the
 	// S3BucketMap.
@@ -71,6 +74,12 @@ func initLogFile() string {
 // AgentDataDirectory returns the location on disk where state should be saved
 func AgentDataDirectory() string {
 	return directoryPrefix + "/var/lib/ecs/data"
+}
+
+// AgentDHClientLeasesDirectory returns the location on disk where dhclient
+// leases information is tracked for ENIs attached to tasks
+func AgentDHClientLeasesDirectory() string {
+	return directoryPrefix + "/var/lib/ecs/dhclient"
 }
 
 // CacheDirectory returns the location on disk where Agent images should be cached

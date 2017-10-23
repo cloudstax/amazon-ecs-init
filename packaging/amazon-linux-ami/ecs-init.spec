@@ -13,7 +13,7 @@
 # limitations under the License.
 
 Name:           cloudstax-ecs-init
-Version:        1.14.4
+Version:        1.14.5
 Release:        1%{?dist}
 Group:          System Environment/Base
 Vendor:         Amazon.com
@@ -27,7 +27,7 @@ Source1:        ecs.conf
 
 BuildRequires:  golang >= 1.7
 
-Requires:       docker >= 1.6.0, docker <= 17.03.2ce
+Requires:       docker >= 17.03.2ce
 Requires:       upstart
 Requires:       iptables
 Requires:       procps
@@ -149,6 +149,8 @@ if [ -e %{running_semaphore} ]; then
 fi
 
 %changelog
+* Fri Sep 29 2017 Justin Haynes <jushay@amazon.com> - 1.14.5-1
+- Cache Agent version 1.14.5
 * Wed Aug 22 2017 Justin Haynes <jushay@amazon.com> - 1.14.4-1
 - Cache Agent version 1.14.4
 - Add support for Docker 17.03.2ce

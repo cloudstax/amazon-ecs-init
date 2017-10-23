@@ -61,7 +61,7 @@ func newDockerClient(dockerClientFactory dockerClientFactory, pingBackoff backof
 		dockerUnixSocketSourcePath = "/var/run/docker.sock"
 	}
 	client, err := dockerClientFactory.NewVersionedClient(
-		config.UnixSocketPrefix+dockerUnixSocketSourcePath, "1.15")
+		config.UnixSocketPrefix+dockerUnixSocketSourcePath, dockerClientAPIVersion)
 	if err != nil {
 		return nil, err
 	}
