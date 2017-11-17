@@ -17,7 +17,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/aws/amazon-ecs-init/ecs-init/config"
+	"github.com/cloudstax/amazon-ecs-init/ecs-init/config"
 	godocker "github.com/fsouza/go-dockerclient"
 	"github.com/golang/mock/gomock"
 )
